@@ -1,8 +1,11 @@
 package org.example.jws1b.controllers;
 
 import org.example.jws1b.entities.BlogEntry;
+import org.example.jws1b.exceptions.NoContentException;
+import org.example.jws1b.exceptions.UnauthorisedException;
 import org.example.jws1b.services.BlogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,8 +38,14 @@ public class BlogController {
     @ResponseBody
     public ResponseEntity<BlogEntry> getBlogEntryById(@PathVariable Long id, @AuthenticationPrincipal Jwt principal) {
         String userId = principal.getSubject();
-        blogServiceImpl.getBlogById(id, userId);
-        return ResponseEntity.ok(blogServiceImpl.getBlogById(id, userId));
+
+        try {
+            return blogServiceImpl.getBlogById(id, userId);
+        } catch (NoContentException e) {
+            return ResponseEntity.notFound().build();
+        } /*catch (UnauthorisedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }*/
     }
 
     @PreAuthorize("hasRole('user')")
@@ -52,14 +61,19 @@ public class BlogController {
     public ResponseEntity<String> updateBlogEntry(@RequestBody BlogEntry blogEntry, @AuthenticationPrincipal Jwt principal) {
         String userId = principal.getSubject();
         blogServiceImpl.updatePost(blogEntry, userId);
-        return ResponseEntity.ok("This message always gets sent (need to fix)");
+        return ResponseEntity.ok("Your blog post was updated");
     }
 
     @PreAuthorize("hasRole('admin') or (hasRole('user'))")
     @DeleteMapping("/deletepost/{id}")
     public ResponseEntity<String> deleteBlogEntry(@PathVariable Long id, @AuthenticationPrincipal Jwt principal, Authentication authentication) {
         String userId = principal.getSubject();
-        blogServiceImpl.deletePostById(id, userId, authentication);
-        return ResponseEntity.ok("This message always gets sent (need to fix)");
+
+        try {
+            blogServiceImpl.deletePostById(id, userId, authentication);
+        } catch (NoContentException e) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok("Your blog post was deleted");
     }
 }

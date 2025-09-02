@@ -1,13 +1,14 @@
 package org.example.jws1b.services;
 
 import jakarta.transaction.Transactional;
+import org.apache.coyote.BadRequestException;
 import org.example.jws1b.entities.BlogEntry;
 import org.example.jws1b.exceptions.NoContentException;
+import org.example.jws1b.exceptions.UnauthorisedException;
 import org.example.jws1b.repositories.BlogRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,12 +32,18 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public BlogEntry getBlogById(Long id, String userId) {
+    public ResponseEntity<BlogEntry> getBlogById(Long id, String userId) {
         BlogEntry theBlog = blogRepository.findBlogByBlogId(id);
-        if (theBlog.getUserId().equals(userId)) {
-            return theBlog;
+
+        if (theBlog == null) {
+            throw new NoContentException("There is no blog post with this id");
         }
-        return null;
+
+        if (!theBlog.getUserId().equals(userId)) {
+            throw new UnauthorisedException("This blog post belongs to another user");
+        }
+
+        return ResponseEntity.ok(theBlog);
     }
 
     @Override
@@ -48,6 +55,15 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void updatePost(BlogEntry blogEntry, String userId) {
         BlogEntry comparisonBlog = blogRepository.findBlogByBlogId(blogEntry.getBlogId());
+
+        if (comparisonBlog == null) {
+            throw new NoContentException("There is no blog post with this id");
+        }
+
+        if (!comparisonBlog.getUserId().equals(userId)) {
+            throw new UnauthorisedException("This blog post belongs to another user");
+        }
+
         if (comparisonBlog.getUserId().equals(userId)) {
             blogEntry.setUserId(userId);
             blogRepository.save(blogEntry);
@@ -62,6 +78,14 @@ public class BlogServiceImpl implements BlogService {
                 .map(GrantedAuthority::getAuthority)
                 .map(String::toUpperCase)
                 .anyMatch(role-> role.equals("ROLE_ADMIN"));
+
+        if (comparisonBlog == null) {
+            throw new NoContentException("nothing to delete");
+        }
+
+        if (!comparisonBlog.getUserId().equals(userId) || isAdmin) {
+            throw new UnauthorisedException("You do not have permission to delete this post");
+        }
 
         if (comparisonBlog.getUserId().equals(userId) || isAdmin) {
             blogRepository.deleteBlogByBlogId(id);

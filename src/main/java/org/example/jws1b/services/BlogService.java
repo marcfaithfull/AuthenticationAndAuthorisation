@@ -1,6 +1,7 @@
 package org.example.jws1b.services;
 
 import org.example.jws1b.entities.BlogEntry;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -11,7 +12,7 @@ public interface BlogService {
 
     List<BlogEntry> getAllBlogEntries(String userId);
 
-    BlogEntry getBlogById(Long id, String userId);
+    ResponseEntity<BlogEntry> getBlogById(Long id, String userId);
 
     void addPost(BlogEntry blogEntry, String userId);
 
