@@ -8,5 +8,7 @@ public interface BlogService {
 
     List<BlogEntry> getAllBlogEntries(String userId);
 
+    BlogEntry getBlogById(Long id, String userId);
+
     void addPost(BlogEntry blogEntry);
 }

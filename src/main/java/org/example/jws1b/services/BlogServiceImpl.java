@@ -20,6 +20,15 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public BlogEntry getBlogById(Long id, String userId) {
+        BlogEntry theBlog = blogRepository.findBlogByBlogId(id);
+        if (theBlog.getUserId().equals(userId)) {
+            return theBlog;
+        }
+        return null;
+    }
+
+    @Override
     public void addPost(BlogEntry blogEntry) {
         blogRepository.save(blogEntry);
     }

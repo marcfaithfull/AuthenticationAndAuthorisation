@@ -9,10 +9,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v2")
 public class BlogController {
     private final BlogServiceImpl blogServiceImpl;
 
@@ -42,4 +43,47 @@ public class BlogController {
         blogServiceImpl.addPost(blogEntry);
         return ResponseEntity.status(HttpStatus.CREATED).body("A post has been made");
     }
+
+    //--------------------------------------------------------------------------------------------------------------------
+
+    @GetMapping("/posts")
+    @ResponseBody
+    public ResponseEntity<List<BlogEntry>> getAllBlogEntries(@AuthenticationPrincipal Jwt principal) {
+        String userId = principal.getSubject();
+        blogServiceImpl.getAllBlogEntries(userId);
+        return ResponseEntity.ok(blogServiceImpl.getAllBlogEntries(userId));
+    }
+
+    @GetMapping("/post/{id}")
+    @ResponseBody
+    public ResponseEntity<BlogEntry> getBlogEntryById(@PathVariable Long id, @AuthenticationPrincipal Jwt principal) {
+        String userId = principal.getSubject();
+        blogServiceImpl.getBlogById(id, userId);
+        return ResponseEntity.ok(blogServiceImpl.getBlogById(id, userId));
+    }
+
+    @PostMapping("/newpost")
+    @ResponseBody
+    public ResponseEntity<String> createBlogEntry(@RequestBody BlogEntry blogEntry) {
+        blogServiceImpl.addPost(blogEntry);
+        return ResponseEntity.status(HttpStatus.CREATED).body("new blog entry added");
+    }
+
+    @PutMapping("/updatepost")
+    public ResponseEntity<String> updateBlogEntry() {
+        return ResponseEntity.ok("updated blog entry");
+    }
+
+    @DeleteMapping("/deletepost/{id}")
+    public ResponseEntity<String> deleteBlogEntry() {
+        return ResponseEntity.ok("deleted blog entry");
+    }
+
+    // Admin Controller
+    @GetMapping("/count")
+    @ResponseBody
+    public ResponseEntity<String> countBlogEntries() {
+        return ResponseEntity.ok("count blog entries");
+    }
+
 }
