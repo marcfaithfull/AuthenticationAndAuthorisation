@@ -14,7 +14,7 @@ public interface BlogService {
 
     ResponseEntity<BlogEntry> getBlogById(Long id, String userId);
 
-    void addPost(BlogEntry blogEntry, String userId);
+    void addPost(BlogEntry blogEntry, String userId, Authentication authentication);
 
     void updatePost(BlogEntry blogEntry, String userId);
 

@@ -2,12 +2,11 @@ package org.example.jws1b.controllers;
 
 import org.example.jws1b.entities.BlogEntry;
 import org.example.jws1b.exceptions.NoContentException;
-import org.example.jws1b.exceptions.UnauthorisedException;
 import org.example.jws1b.services.BlogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,17 +42,15 @@ public class BlogController {
             return blogServiceImpl.getBlogById(id, userId);
         } catch (NoContentException e) {
             return ResponseEntity.notFound().build();
-        } /*catch (UnauthorisedException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }*/
+        }
     }
 
     @PreAuthorize("hasRole('user')")
     @PostMapping("/newpost")
     @ResponseBody
-    public ResponseEntity<String> createBlogEntry(@RequestBody BlogEntry blogEntry, @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<String> createBlogEntry(@RequestBody BlogEntry blogEntry, @AuthenticationPrincipal Jwt principal, Authentication authentication) {
         String userId = principal.getSubject();
-        blogServiceImpl.addPost(blogEntry, userId);
+        blogServiceImpl.addPost(blogEntry, userId, authentication);
         return ResponseEntity.status(HttpStatus.CREATED).body("new blog entry added");
     }
 
@@ -75,5 +72,13 @@ public class BlogController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok("Your blog post was deleted");
+    }
+
+    // ADMIN CONTROLLER
+    @GetMapping("/count")
+    @Secured("admin")
+    public ResponseEntity<Long> totalBlogs() {
+        blogServiceImpl.countAllBlogPosts();
+        return ResponseEntity.ok(blogServiceImpl.countAllBlogPosts());
     }
 }

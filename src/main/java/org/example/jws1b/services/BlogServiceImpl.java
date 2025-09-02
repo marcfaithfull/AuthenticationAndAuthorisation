@@ -1,7 +1,6 @@
 package org.example.jws1b.services;
 
 import jakarta.transaction.Transactional;
-import org.apache.coyote.BadRequestException;
 import org.example.jws1b.entities.BlogEntry;
 import org.example.jws1b.exceptions.NoContentException;
 import org.example.jws1b.exceptions.UnauthorisedException;
@@ -9,6 +8,7 @@ import org.example.jws1b.repositories.BlogRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,9 +47,12 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void addPost(BlogEntry blogEntry, String userId) {
+    public void addPost(BlogEntry blogEntry, String userId, Authentication authentication) {
         blogEntry.setUserId(userId);
         blogRepository.save(blogEntry);
+        Authentication keycloakUser = SecurityContextHolder.getContext().getAuthentication();
+
+        System.out.println(keycloakUser);
     }
 
     @Override

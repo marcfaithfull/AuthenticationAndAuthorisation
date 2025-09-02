@@ -37,11 +37,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
 
                 .csrf(csrf->csrf.disable())
-                        //.ignoringRequestMatchers("/api/v1/**")
-                        //.ignoringRequestMatchers("/h2-console/**"))
-                .headers(headers -> headers.frameOptions(frame->frame
-                        .sameOrigin()))
-
+                .headers(headers -> headers.frameOptions(frame->frame.sameOrigin()))
                 .oauth2ResourceServer(oauth->oauth
                         .jwt(jwt->jwt.jwtAuthenticationConverter(jwtAuthConverter)));
 
