@@ -30,7 +30,7 @@ public class BlogController {
     @ResponseBody
     public ResponseEntity<List<BlogEntry>> test(@AuthenticationPrincipal Jwt principal) {
         String userId = principal.getSubject();
-        System.out.println(userId);
+        //System.out.println(userId);
 
         blogServiceImpl.getAllBlogEntries(userId);
         return ResponseEntity.ok(blogServiceImpl.getAllBlogEntries(userId));
