@@ -18,4 +18,9 @@ public class BlogServiceImpl implements BlogService {
     public List<BlogEntry> getAllBlogEntries() {
         return blogRepository.findAll();
     }
+
+    @Override
+    public void addPost(BlogEntry blogEntry) {
+        blogRepository.save(blogEntry);
+    }
 }

@@ -7,4 +7,6 @@ import java.util.List;
 public interface BlogService {
 
     List<BlogEntry> getAllBlogEntries();
+
+    void addPost(BlogEntry blogEntry);
 }

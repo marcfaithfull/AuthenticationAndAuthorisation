@@ -3,11 +3,9 @@ package org.example.jws1b.controllers;
 import org.example.jws1b.entities.BlogEntry;
 import org.example.jws1b.services.BlogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,5 +29,12 @@ public class BlogController {
     public ResponseEntity<List<BlogEntry>> test() {
         blogServiceImpl.getAllBlogEntries();
         return ResponseEntity.ok(blogServiceImpl.getAllBlogEntries());
+    }
+
+    @PostMapping("/addpost")
+    @ResponseBody
+    public ResponseEntity<String> addNewPost(@RequestBody BlogEntry blogEntry) {
+        blogServiceImpl.addPost(blogEntry);
+        return ResponseEntity.status(HttpStatus.CREATED).body("A post has been made");
     }
 }
