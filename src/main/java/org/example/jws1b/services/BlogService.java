@@ -15,4 +15,6 @@ public interface BlogService {
     void updatePost(BlogEntry blogEntry, String userId);
 
     void deletePostById(Long id, String userId);
+
+    Long countAllBlogPosts();
 }

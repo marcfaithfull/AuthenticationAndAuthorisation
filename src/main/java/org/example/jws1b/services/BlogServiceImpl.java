@@ -38,7 +38,6 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public void updatePost(BlogEntry blogEntry, String userId) {
-        //System.out.println(blogEntry.getBlogId());
         BlogEntry comparisonBlog = blogRepository.findBlogByBlogId(blogEntry.getBlogId());
         if (comparisonBlog.getUserId().equals(userId)) {
             blogEntry.setUserId(userId);
@@ -52,5 +51,11 @@ public class BlogServiceImpl implements BlogService {
         if (comparisonBlog.getUserId().equals(userId)) {
             blogRepository.deleteBlogByBlogId(id);
         }
+    }
+
+    @Override
+    public Long countAllBlogPosts() {
+        int size = blogRepository.findAll().size();
+        return (long) size;
     }
 }

@@ -9,7 +9,6 @@ public class BlogEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@JsonIgnore
     private Long blogId;
 
     @JsonIgnore
