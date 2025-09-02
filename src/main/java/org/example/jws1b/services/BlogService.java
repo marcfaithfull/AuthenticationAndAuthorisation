@@ -11,4 +11,8 @@ public interface BlogService {
     BlogEntry getBlogById(Long id, String userId);
 
     void addPost(BlogEntry blogEntry, String userId);
+
+    void updatePost(BlogEntry blogEntry, String userId);
+
+    void deletePostById(Long id, String userId);
 }

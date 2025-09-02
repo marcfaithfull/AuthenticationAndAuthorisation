@@ -71,20 +71,23 @@ public class BlogController {
     }
 
     @PutMapping("/updatepost")
-    public ResponseEntity<String> updateBlogEntry() {
-        return ResponseEntity.ok("updated blog entry");
+    public ResponseEntity<String> updateBlogEntry(@RequestBody BlogEntry blogEntry, @AuthenticationPrincipal Jwt principal) {
+        String userId = principal.getSubject();
+        blogServiceImpl.updatePost(blogEntry, userId);
+        return ResponseEntity.ok("This message always gets sent (need to fix)");
     }
 
     @DeleteMapping("/deletepost/{id}")
-    public ResponseEntity<String> deleteBlogEntry() {
-        return ResponseEntity.ok("deleted blog entry");
+    public ResponseEntity<String> deleteBlogEntry(@PathVariable Long id, @AuthenticationPrincipal Jwt principal) {
+        String userId = principal.getSubject();
+        blogServiceImpl.deletePostById(id, userId);
+        return ResponseEntity.ok("This message always gets sent (need to fix)");
     }
 
     // Admin Controller
     @GetMapping("/count")
     @ResponseBody
     public ResponseEntity<String> countBlogEntries() {
-        return ResponseEntity.ok("count blog entries");
+        return ResponseEntity.ok("");
     }
-
 }

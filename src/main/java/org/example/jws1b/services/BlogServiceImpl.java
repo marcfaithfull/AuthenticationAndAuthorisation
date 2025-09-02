@@ -1,5 +1,6 @@
 package org.example.jws1b.services;
 
+import jakarta.transaction.Transactional;
 import org.example.jws1b.entities.BlogEntry;
 import org.example.jws1b.repositories.BlogRepository;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional
 public class BlogServiceImpl implements BlogService {
     private final BlogRepository blogRepository;
 
@@ -32,5 +34,23 @@ public class BlogServiceImpl implements BlogService {
     public void addPost(BlogEntry blogEntry, String userId) {
         blogEntry.setUserId(userId);
         blogRepository.save(blogEntry);
+    }
+
+    @Override
+    public void updatePost(BlogEntry blogEntry, String userId) {
+        //System.out.println(blogEntry.getBlogId());
+        BlogEntry comparisonBlog = blogRepository.findBlogByBlogId(blogEntry.getBlogId());
+        if (comparisonBlog.getUserId().equals(userId)) {
+            blogEntry.setUserId(userId);
+            blogRepository.save(blogEntry);
+        }
+    }
+
+    @Override
+    public void deletePostById(Long id, String userId) {
+        BlogEntry comparisonBlog = blogRepository.findBlogByBlogId(id);
+        if (comparisonBlog.getUserId().equals(userId)) {
+            blogRepository.deleteBlogByBlogId(id);
+        }
     }
 }
