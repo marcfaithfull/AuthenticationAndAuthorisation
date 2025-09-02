@@ -2,7 +2,12 @@ package org.example.jws1b.services;
 
 import jakarta.transaction.Transactional;
 import org.example.jws1b.entities.BlogEntry;
+import org.example.jws1b.exceptions.NoContentException;
 import org.example.jws1b.repositories.BlogRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +23,10 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<BlogEntry> getAllBlogEntries(String userId) {
+        List<BlogEntry> blogEntries = blogRepository.findAllByUserId(userId);
+        if (blogEntries.isEmpty()) {
+            throw new NoContentException("The database is empty");
+        }
         return blogRepository.findAllByUserId(userId);
     }
 
@@ -46,9 +55,15 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void deletePostById(Long id, String userId) {
+    public void deletePostById(Long id, String userId, Authentication authentication) {
         BlogEntry comparisonBlog = blogRepository.findBlogByBlogId(id);
-        if (comparisonBlog.getUserId().equals(userId)) {
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(String::toUpperCase)
+                .anyMatch(role-> role.equals("ROLE_ADMIN"));
+
+        if (comparisonBlog.getUserId().equals(userId) || isAdmin) {
             blogRepository.deleteBlogByBlogId(id);
         }
     }

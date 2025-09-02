@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@PreAuthorize("hasRole('user')")
 @RestController
 @RequestMapping("/api/v2")
 public class BlogController {
@@ -39,6 +39,7 @@ public class BlogController {
         return ResponseEntity.ok(blogServiceImpl.getBlogById(id, userId));
     }
 
+    @PreAuthorize("hasRole('user')")
     @PostMapping("/newpost")
     @ResponseBody
     public ResponseEntity<String> createBlogEntry(@RequestBody BlogEntry blogEntry, @AuthenticationPrincipal Jwt principal) {
@@ -54,10 +55,11 @@ public class BlogController {
         return ResponseEntity.ok("This message always gets sent (need to fix)");
     }
 
+    @PreAuthorize("hasRole('admin') or (hasRole('user'))")
     @DeleteMapping("/deletepost/{id}")
-    public ResponseEntity<String> deleteBlogEntry(@PathVariable Long id, @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<String> deleteBlogEntry(@PathVariable Long id, @AuthenticationPrincipal Jwt principal, Authentication authentication) {
         String userId = principal.getSubject();
-        blogServiceImpl.deletePostById(id, userId);
+        blogServiceImpl.deletePostById(id, userId, authentication);
         return ResponseEntity.ok("This message always gets sent (need to fix)");
     }
 }
