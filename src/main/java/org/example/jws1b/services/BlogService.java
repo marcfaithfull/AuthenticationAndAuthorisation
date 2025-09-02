@@ -10,5 +10,5 @@ public interface BlogService {
 
     BlogEntry getBlogById(Long id, String userId);
 
-    void addPost(BlogEntry blogEntry);
+    void addPost(BlogEntry blogEntry, String userId);
 }

@@ -37,12 +37,12 @@ public class BlogController {
         return ResponseEntity.ok(blogServiceImpl.getAllBlogEntries(userId));
     }
 
-    @PostMapping("/addpost")
+    /*@PostMapping("/addpost")
     @ResponseBody
     public ResponseEntity<String> addNewPost(@RequestBody BlogEntry blogEntry) {
-        blogServiceImpl.addPost(blogEntry);
+        blogServiceImpl.addPost(blogEntry, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body("A post has been made");
-    }
+    }*/
 
     //--------------------------------------------------------------------------------------------------------------------
 
@@ -64,8 +64,9 @@ public class BlogController {
 
     @PostMapping("/newpost")
     @ResponseBody
-    public ResponseEntity<String> createBlogEntry(@RequestBody BlogEntry blogEntry) {
-        blogServiceImpl.addPost(blogEntry);
+    public ResponseEntity<String> createBlogEntry(@RequestBody BlogEntry blogEntry, @AuthenticationPrincipal Jwt principal) {
+        String userId = principal.getSubject();
+        blogServiceImpl.addPost(blogEntry, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body("new blog entry added");
     }
 

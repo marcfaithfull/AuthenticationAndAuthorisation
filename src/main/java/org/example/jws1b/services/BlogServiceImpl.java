@@ -29,7 +29,8 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void addPost(BlogEntry blogEntry) {
+    public void addPost(BlogEntry blogEntry, String userId) {
+        blogEntry.setUserId(userId);
         blogRepository.save(blogEntry);
     }
 }
