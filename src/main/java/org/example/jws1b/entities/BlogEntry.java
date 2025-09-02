@@ -1,5 +1,6 @@
 package org.example.jws1b.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,7 +11,8 @@ public class BlogEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long blogId;
 
-    private Long userId;
+    @JsonIgnore
+    private String userId;
 
     private String title;
 
@@ -24,11 +26,11 @@ public class BlogEntry {
         this.blogId = blogId;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

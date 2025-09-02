@@ -15,8 +15,8 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<BlogEntry> getAllBlogEntries() {
-        return blogRepository.findAll();
+    public List<BlogEntry> getAllBlogEntries(String userId) {
+        return blogRepository.findAllByUserId(userId);
     }
 
     @Override

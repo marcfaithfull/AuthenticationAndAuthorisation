@@ -5,6 +5,8 @@ import org.example.jws1b.services.BlogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,9 +28,12 @@ public class BlogController {
 
     @GetMapping("/anothertest")
     @ResponseBody
-    public ResponseEntity<List<BlogEntry>> test() {
-        blogServiceImpl.getAllBlogEntries();
-        return ResponseEntity.ok(blogServiceImpl.getAllBlogEntries());
+    public ResponseEntity<List<BlogEntry>> test(@AuthenticationPrincipal Jwt principal) {
+        String userId = principal.getSubject();
+        System.out.println(userId);
+
+        blogServiceImpl.getAllBlogEntries(userId);
+        return ResponseEntity.ok(blogServiceImpl.getAllBlogEntries(userId));
     }
 
     @PostMapping("/addpost")
