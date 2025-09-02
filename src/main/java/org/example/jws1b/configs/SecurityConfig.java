@@ -20,12 +20,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf->csrf.disable())
-                .authorizeHttpRequests(auth->
-                        auth
+                .authorizeHttpRequests(auth-> auth
+                                .requestMatchers("/h2-console/**").permitAll()
                                 .requestMatchers("/api/v1/getname").hasRole("admin")
-                                .anyRequest().authenticated()
-                ).oauth2ResourceServer(oauth->oauth.jwt(jwt->jwt.jwtAuthenticationConverter(jwtAuthConverter)));
+                                .anyRequest().authenticated())
+                .csrf(csrf->csrf
+                        .ignoringRequestMatchers("/api/v1/**")
+                        .ignoringRequestMatchers("/h2-console/**"))
+                .headers(headers -> headers.frameOptions(frame -> frame
+                        .sameOrigin()))
+                .oauth2ResourceServer(oauth->oauth
+                        .jwt(jwt->jwt.jwtAuthenticationConverter(jwtAuthConverter)));
         return http.build();
     }
 }
