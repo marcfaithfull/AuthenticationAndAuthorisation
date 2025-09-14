@@ -51,8 +51,8 @@ public class BlogServiceImpl implements BlogService {
         blogEntry.setUserId(userId);
         blogRepository.save(blogEntry);
         Authentication keycloakUser = SecurityContextHolder.getContext().getAuthentication();
-
-        System.out.println(keycloakUser);
+        String keycloakUserId = keycloakUser.getName();
+        System.out.println(keycloakUserId);
     }
 
     @Override
